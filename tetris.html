@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Розовый Тетрис</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #ff69b4 0%, #ffb6c1 50%, #ffc0cb 100%);
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        .game-container {
+            display: flex;
+            gap: 30px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(255, 105, 180, 0.4);
+        }
+
+        canvas {
+            border: 4px solid #ff69b4;
+            border-radius: 10px;
+            background: #ffc0cb;
+            box-shadow: 0 5px 20px rgba(255, 105, 180, 0.3);
+        }
+
+        .info-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            min-width: 200px;
+        }
+
+        .score-box {
+            background: linear-gradient(135deg, #ff69b4, #ff1493);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(255, 20, 147, 0.3);
+        }
+
+        .score-box h3 {
+            font-size: 14px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .score-box p {
+            font-size: 32px;
+            font-weight: bold;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .next-piece-box {
+            background: linear-gradient(135deg, #ffb6c1, #ff69b4);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        .next-piece-box h3 {
+            color: #ff1493;
+            font-size: 14px;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        #nextCanvas {
+            border: 3px solid #ff69b4;
+            border-radius: 8px;
+            background: #ffc0cb;
+        }
+
+        .controls {
+            background: #fff0f5;
+            padding: 20px;
+            border-radius: 15px;
+            border: 2px solid #ffb6c1;
+        }
+
+        .controls h3 {
+            color: #ff1493;
+            font-size: 14px;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+
+        .controls p {
+            color: #c71585;
+            font-size: 12px;
+            margin: 8px 0;
+        }
+
+        .controls span {
+            background: #ff69b4;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #ff69b4, #ff1493);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 10px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(255, 105, 180, 0.4);
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(255, 105, 180, 0.5);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .game-over {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 20, 147, 0.95);
+            color: white;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            display: none;
+            z-index: 100;
+        }
+
+        .game-over h2 {
+            font-size: 32px;
+            margin-bottom: 20px;
+            text-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .game-over p {
+            font-size: 24px;
+            margin-bottom: 30px;
+        }
+
+        .hearts {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .heart {
+            position: absolute;
+            font-size: 30px;
+            color: #ff69b4;
+            opacity: 0.3;
+            animation: float 15s infinite;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.3;
+            }
+            90% {
+                opacity: 0.3;
+            }
+            100% {
+                transform: translateY(-100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="hearts" id="hearts"></div>
+    
+    <div class="game-container">
+        <canvas id="gameCanvas" width="300" height="600"></canvas>
+        
+        <div class="info-panel">
+            <div class="score-box">
+                <h3>Счёт</h3>
+                <p id="score">0</p>
+            </div>
+            
+            <div class="next-piece-box">
+                <h3>Следующая</h3>
+                <canvas id="nextCanvas" width="120" height="120"></canvas>
+            </div>
+            
+            <div class="controls">
+                <h3>Управление</h3>
+                <p><span>←</span> <span>→</span> Движение</p>
+                <p><span>↑</span> Поворот</p>
+                <p><span>↓</span> Ускорить</p>
+            </div>
+            
+            <button class="btn" id="startBtn">Старт</button>
+        </div>
+    </div>
+    
+    <div class="game-over" id="gameOver">
+        <h2>💖 Game Over 💖</h2>
+        <p>Ваш счёт: <span id="finalScore">0</span></p>
+        <button class="btn" onclick="resetGame()">Играть снова</button>
+    </div>
+
+    <script>
+        // Создаём плавающие сердечки на фоне
+        const heartsContainer = document.getElementById('hearts');
+        for (let i = 0; i < 20; i++) {
+            const heart = document.createElement('div');
+            heart.className = 'heart';
+            heart.textContent = '💖';
+            heart.style.left = Math.random() * 100 + '%';
+            heart.style.animationDelay = Math.random() * 15 + 's';
+            heart.style.fontSize = (20 + Math.random() * 30) + 'px';
+            heartsContainer.appendChild(heart);
+        }
+
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const nextCanvas = document.getElementById('nextCanvas');
+        const nextCtx = nextCanvas.getContext('2d');
+        
+        const COLS = 10;
+        const ROWS = 20;
+        const BLOCK_SIZE = 30;
+        const NEXT_BLOCK_SIZE = 25;
+        
+        // Розовые цвета для фигур
+        const COLORS = [
+            '#ff1493', // Deep Pink
+            '#ff69b4', // Hot Pink
+            '#ff6eb4', // Pink
+            '#ffb6c1', // Light Pink
+            '#ffc0cb', // Pink
+            '#ff1493', // Deep Pink
+            '#c71585', // Medium Violet Red
+            '#db7093', // Pale Violet Red
+        ];
+        
+        const SHAPES = [
+            [[1, 1, 1, 1]], // I
+            [[1, 1], [1, 1]], // O
+            [[0, 1, 0], [1, 1, 1]], // T
+            [[1, 0, 0], [1, 1, 1]], // L
+            [[0, 0, 1], [1, 1, 1]], // J
+            [[0, 1, 1], [1, 1, 0]], // S
+            [[1, 1, 0], [0, 1, 1]]  // Z
+        ];
+        
+        let board = [];
+        let score = 0;
+        let gameLoop;
+        let isGameOver = false;
+        let currentPiece;
+        let nextPiece;
+        
+        class Piece {
+            constructor(shapeIndex) {
+                this.shape = SHAPES[shapeIndex];
+                this.color = COLORS[shapeIndex];
+                this.x = Math.floor(COLS / 2) - Math.floor(this.shape[0].length / 2);
+                this.y = 0;
+            }
+            
+            draw(context, blockSize) {
+                this.shape.forEach((row, rowIndex) => {
+                    row.forEach((cell, colIndex) => {
+                        if (cell) {
+                            this.drawBlock(context, this.x + colIndex, this.y + rowIndex, this.color, blockSize);
+                        }
+                    });
+                });
+            }
+            
+            drawBlock(context, x, y, color, blockSize) {
+                context.fillStyle = color;
+                context.fillRect(x * blockSize, y * blockSize, blockSize - 1, blockSize - 1);
+                
+                // Блик
+                context.fillStyle = 'rgba(255, 255, 255, 0.3)';
+                context.fillRect(x * blockSize, y * blockSize, blockSize - 1, 5);
+                
+                // Тень
+                context.fillStyle = 'rgba(0, 0, 0, 0.2)';
+                context.fillRect(x * blockSize, y * blockSize + blockSize - 6, blockSize - 1, 5);
+            }
+        }
+        
+        function createBoard() {
+            board = [];
+            for (let r = 0; r < ROWS; r++) {
+                board[r] = [];
+                for (let c = 0; c < COLS; c++) {
+                    board[r][c] = 0;
+                }
+            }
+        }
+        
+        function drawBoard() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Рисуем сетку
+            ctx.strokeStyle = 'rgba(255, 105, 180, 0.2)';
+            ctx.lineWidth = 1;
+            for (let r = 0; r < ROWS; r++) {
+                for (let c = 0; c < COLS; c++) {
+                    ctx.strokeRect(c * BLOCK_SIZE, r * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
+                }
+            }
+            
+            // Рисуем застывшие фигуры
+            board.forEach((row, rowIndex) => {
+                row.forEach((cell, colIndex) => {
+                    if (cell) {
+                        currentPiece.drawBlock(ctx, colIndex, rowIndex, cell, BLOCK_SIZE);
+                    }
+                });
+            });
+        }
+        
+        function drawNextPiece() {
+            nextCtx.clearRect(0, 0, nextCanvas.width, nextCanvas.height);
+            if (nextPiece) {
+                const offsetX = (nextCanvas.width / NEXT_BLOCK_SIZE - nextPiece.shape[0].length) / 2;
+                const offsetY = (nextCanvas.height / NEXT_BLOCK_SIZE - nextPiece.shape.length) / 2;
+                
+                nextPiece.shape.forEach((row, rowIndex) => {
+                    row.forEach((cell, colIndex) => {
+                        if (cell) {
+                            nextCtx.fillStyle = nextPiece.color;
+                            nextCtx.fillRect(
+                                (offsetX + colIndex) * NEXT_BLOCK_SIZE,
+                                (offsetY + rowIndex) * NEXT_BLOCK_SIZE,
+                                NEXT_BLOCK_SIZE - 1,
+                                NEXT_BLOCK_SIZE - 1
+                            );
+                        }
+                    });
+                });
+            }
+        }
+        
+        function randomPiece() {
+            return new Piece(Math.floor(Math.random() * SHAPES.length));
+        }
+        
+        function collision(piece, offsetX = 0, offsetY = 0) {
+            return piece.shape.some((row, rowIndex) => {
+                return row.some((cell, colIndex) => {
+                    if (!cell) return false;
+                    const newX = piece.x + colIndex + offsetX;
+                    const newY = piece.y + rowIndex + offsetY;
+                    return newX < 0 || newX >= COLS || newY >= ROWS || (newY >= 0 && board[newY][newX]);
+                });
+            });
+        }
+        
+        function rotate(piece) {
+            const rotated = piece.shape[0].map((_, i) =>
+                piece.shape.map(row => row[i]).reverse()
+            );
+            const prevShape = piece.shape;
+            piece.shape = rotated;
+            
+            if (collision(piece)) {
+                piece.shape = prevShape;
+            }
+        }
+        
+        function merge() {
+            currentPiece.shape.forEach((row, rowIndex) => {
+                row.forEach((cell, colIndex) => {
+                    if (cell && currentPiece.y + rowIndex >= 0) {
+                        board[currentPiece.y + rowIndex][currentPiece.x + colIndex] = currentPiece.color;
+                    }
+                });
+            });
+        }
+        
+        function clearLines() {
+            let lines = 0;
+            for (let r = ROWS - 1; r >= 0; r--) {
+                if (board[r].every(cell => cell)) {
+                    board.splice(r, 1);
+                    board.unshift(Array(COLS).fill(0));
+                    lines++;
+                    r++;
+                }
+            }
+            
+            if (lines > 0) {
+                score += lines * 100 * lines;
+                document.getElementById('score').textContent = score;
+            }
+        }
+        
+        function drop() {
+            if (!collision(currentPiece, 0, 1)) {
+                currentPiece.y++;
+            } else {
+                merge();
+                clearLines();
+                currentPiece = nextPiece;
+                nextPiece = randomPiece();
+                drawNextPiece();
+                
+                if (collision(currentPiece)) {
+                    isGameOver = true;
+                    document.getElementById('finalScore').textContent = score;
+                    document.getElementById('gameOver').style.display = 'block';
+                    clearInterval(gameLoop);
+                }
+            }
+            drawBoard();
+            currentPiece.draw(ctx, BLOCK_SIZE);
+        }
+        
+        function startGame() {
+            createBoard();
+            score = 0;
+            document.getElementById('score').textContent = score;
+            isGameOver = false;
+            document.getElementById('gameOver').style.display = 'none';
+            
+            currentPiece = randomPiece();
+            nextPiece = randomPiece();
+            drawNextPiece();
+            
+            clearInterval(gameLoop);
+            gameLoop = setInterval(drop, 500);
+        }
+        
+        function resetGame() {
+            startGame();
+        }
+        
+        document.addEventListener('keydown', event => {
+            if (isGameOver) return;
+            
+            switch(event.keyCode) {
+                case 37: // Left
+                    if (!collision(currentPiece, -1, 0)) currentPiece.x--;
+                    break;
+                case 39: // Right
+                    if (!collision(currentPiece, 1, 0)) currentPiece.x++;
+                    break;
+                case 40: // Down
+                    if (!collision(currentPiece, 0, 1)) currentPiece.y++;
+                    break;
+                case 38: // Up (rotate)
+                    rotate(currentPiece);
+                    break;
+            }
+            drawBoard();
+            currentPiece.draw(ctx, BLOCK_SIZE);
+        });
+        
+        document.getElementById('startBtn').addEventListener('click', startGame);
+        
+        // Initial draw
+        createBoard();
+        drawBoard();
+    </script>
+</body>
+</html>
