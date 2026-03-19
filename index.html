@@ -34,7 +34,7 @@
             width: 100%;
             height: 100%;
             z-index: 5;
-            pointer-events: auto;
+            pointer-events: none;
             background: transparent;
         }
 
@@ -182,6 +182,7 @@
             transform: scale(0.8) translateY(50px);
             transition: all 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
             position: relative;
+            pointer-events: auto;
         }
 
         .phrase.visible {
@@ -436,6 +437,11 @@
         }
 
         function showNextPhrase(event) {
+            // Игнорируем клики внутри контейнера с фразами
+            if (event.target.closest('.container')) {
+                return;
+            }
+            
             if (currentIndex < totalPhrases) {
                 phrases[currentIndex].classList.add('visible');
                 
@@ -451,8 +457,8 @@
             }
         }
 
-        // Обработка кликов только на overlay
-        document.getElementById('clickOverlay').addEventListener('click', showNextPhrase);
+        // Обработка кликов на body (вне контейнера)
+        document.body.addEventListener('click', showNextPhrase);
 
         // Показать первую фразу при загрузке
         setTimeout(() => {
