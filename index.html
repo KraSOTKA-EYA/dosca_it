@@ -21,14 +21,21 @@
             justify-content: flex-start;
             align-items: center;
             overflow-y: auto;
-            cursor: pointer;
             position: relative;
             padding-top: 150px;
             padding-bottom: 50px;
             -webkit-overflow-scrolling: touch;
-            user-select: none;
-            -webkit-user-select: none;
-            overscroll-behavior: none;
+        }
+
+        .click-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 5;
+            pointer-events: auto;
+            background: transparent;
         }
 
         .stars {
@@ -138,6 +145,7 @@
             box-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
             border: 2px solid #ffd700;
             pointer-events: auto;
+            background-clip: padding-box;
         }
 
         .khl-logos {
@@ -261,6 +269,7 @@
 </head>
 
 <body>
+    <div class="click-overlay" id="clickOverlay"></div>
     <div class="stars"></div>
     
     <div class="running-line">
@@ -303,13 +312,6 @@
         let currentIndex = 0;
         const phrases = document.querySelectorAll('.phrase');
         const totalPhrases = phrases.length;
-        let lastScrollTime = 0;
-        let lastClickTime = 0;
-
-        // Отслеживаем скролл
-        window.addEventListener('scroll', function() {
-            lastScrollTime = Date.now();
-        }, { passive: true });
 
         // Клубы КХЛ 2025/2026 по конференциям
         const khlWest = [
@@ -434,26 +436,13 @@
         }
 
         function showNextPhrase(event) {
-            event.preventDefault();
-            event.stopPropagation();
-            
-            // Защита от частых кликов (меньше 300мс)
-            const now = Date.now();
-            if (now - lastClickTime < 300) {
-                return;
-            }
-            
-            // Не показываем фразы, если был скролл в последние 300мс
-            if (now - lastScrollTime < 300) {
-                return;
-            }
-            
-            lastClickTime = now;
-            
             if (currentIndex < totalPhrases) {
                 phrases[currentIndex].classList.add('visible');
-                createFirework(event.clientX || event.touches?.[0]?.clientX || window.innerWidth / 2, 
-                              event.clientY || event.touches?.[0]?.clientY || window.innerHeight / 2);
+                
+                const x = event.clientX || window.innerWidth / 2;
+                const y = event.clientY || window.innerHeight / 2;
+                createFirework(x, y);
+                
                 currentIndex++;
 
                 if (currentIndex === totalPhrases) {
@@ -462,8 +451,8 @@
             }
         }
 
-        // Обработка кликов и тапов
-        document.body.addEventListener('click', showNextPhrase, { passive: false });
+        // Обработка кликов только на overlay
+        document.getElementById('clickOverlay').addEventListener('click', showNextPhrase);
 
         // Показать первую фразу при загрузке
         setTimeout(() => {
