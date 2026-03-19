@@ -40,6 +40,34 @@
             background-size: contain;
         }
 
+        .khl-logos {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .khl-logo {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            opacity: 0.3;
+            animation: float 20s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) rotate(0deg);
+            }
+            50% {
+                transform: translateY(-30px) rotate(10deg);
+            }
+        }
+
         .container {
             text-align: center;
             z-index: 10;
@@ -160,6 +188,8 @@
         </div>
     </div>
 
+    <div class="khl-logos" id="khlLogos"></div>
+
     <div class="background-cup"></div>
     
     <div class="container">
@@ -192,6 +222,49 @@
         let currentIndex = 0;
         const phrases = document.querySelectorAll('.phrase');
         const totalPhrases = phrases.length;
+
+        // Эмблемы клубов КХЛ 2026
+        const khlTeams = [
+            { name: 'Ak Bars', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/Ak_Bars_logo.svg/200px-Ak_Bars_logo.svg.png' },
+            { name: 'SKA', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/SKA_Saint_Petersburg_logo.svg/200px-SKA_Saint_Petersburg_logo.svg.png' },
+            { name: 'CSKA', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/CSKA_Moscow_logo_%282017%29.svg/200px-CSKA_Moscow_logo_%282017%29.svg.png' },
+            { name: 'Metallurg Mg', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Metallurg_Magnitogorsk_logo.svg/200px-Metallurg_Magnitogorsk_logo.svg.png' },
+            { name: 'Avangard', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Avangard_Omsk_logo.svg/200px-Avangard_Omsk_logo.svg.png' },
+            { name: 'Lokomotiv', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Lokomotiv_Yaroslavl_logo.svg/200px-Lokomotiv_Yaroslavl_logo.svg.png' },
+            { name: 'Salavat Yulaev', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Salavat_Yulaev_Ufa_logo.svg/200px-Salavat_Yulaev_Ufa_logo.svg.png' },
+            { name: 'Traktor', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Traktor_Chelyabinsk_logo.svg/200px-Traktor_Chelyabinsk_logo.svg.png' },
+            { name: 'Dynamo Msk', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Dynamo_Moscow_logo_%282019%29.svg/200px-Dynamo_Moscow_logo_%282019%29.svg.png' },
+            { name: 'Spartak', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Spartak_Moscow_logo_%282015%29.svg/200px-Spartak_Moscow_logo_%282015%29.svg.png' },
+            { name: 'Torpedo', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Torpedo_Nizhny_Novgorod_logo.svg/200px-Torpedo_Nizhny_Novgorod_logo.svg.png' },
+            { name: 'Severstal', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/Severstal_Cherepovets_logo.svg/200px-Severstal_Cherepovets_logo.svg.png' },
+            { name: 'Vityaz', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Vityaz_Podolsk_logo.svg/200px-Vityaz_Podolsk_logo.svg.png' },
+            { name: 'Sibir', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/HC_Sibir_logo.svg/200px-HC_Sibir_logo.svg.png' },
+            { name: 'Admiral', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Admiral_Vladivostok_logo.svg/200px-Admiral_Vladivostok_logo.svg.png' },
+            { name: 'Amur', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Amur_Khabarovsk_logo.svg/200px-Amur_Khabarovsk_logo.svg.png' },
+            { name: 'Barys', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/Barys_Astana_logo.svg/200px-Barys_Astana_logo.svg.png' },
+            { name: 'Dynamo Mn', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/Dynamo_Minsk_logo.svg/200px-Dynamo_Minsk_logo.svg.png' },
+            { name: 'Neftekhimik', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Neftekhimik_Nizhnekamsk_logo.svg/200px-Neftekhimik_Nizhnekamsk_logo.svg.png' },
+            { name: 'Avtomobilist', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Avtomobilist_Yekaterinburg_logo.svg/200px-Avtomobilist_Yekaterinburg_logo.svg.png' },
+            { name: 'Kunlun', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Kunlun_Red_Star_logo.svg/200px-Kunlun_Red_Star_logo.svg.png' },
+            { name: 'Lada', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/HC_Lada_logo.svg/200px-HC_Lada_logo.svg.png' },
+            { name: 'Sochi', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f8/HC_Sochi_logo.svg/200px-HC_Sochi_logo.svg.png' },
+            { name: 'Dinamo Riga', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Dinamo_Riga_logo.svg/200px-Dinamo_Riga_logo.svg.png' }
+        ];
+
+        // Добавляем эмблемы на фон
+        const khlLogosContainer = document.getElementById('khlLogos');
+        khlTeams.forEach((team, index) => {
+            const img = document.createElement('img');
+            img.src = team.logo;
+            img.alt = team.name;
+            img.className = 'khl-logo';
+            img.style.left = Math.random() * 90 + '%';
+            img.style.top = Math.random() * 90 + '%';
+            img.style.animationDelay = (index * 0.5) + 's';
+            img.style.width = (40 + Math.random() * 30) + 'px';
+            img.style.height = (40 + Math.random() * 30) + 'px';
+            khlLogosContainer.appendChild(img);
+        });
 
         // Обратный отсчёт до плей-офф
         const playoffDate = new Date('March 23, 2026 00:00:00').getTime();
