@@ -27,20 +27,6 @@
             padding-bottom: 50px;
         }
 
-        .khl-logos-container-wrapper {
-            position: fixed;
-            top: 60px;
-            left: 0;
-            width: 100%;
-            height: calc(100vh - 120px);
-            overflow-y: auto;
-            pointer-events: none;
-            z-index: 0;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-        }
-
         .background-cup {
             position: absolute;
             top: 50%;
@@ -55,17 +41,17 @@
         }
 
         .khl-logos {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            align-items: center;
-            gap: 15px;
-            padding: 20px;
-            max-width: 1200px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
             z-index: 1;
         }
 
         .khl-logo {
+            position: absolute;
             display: flex;
             align-items: center;
             gap: 8px;
@@ -121,6 +107,10 @@
             background: rgba(0, 0, 0, 0.7);
             border-radius: 20px;
             margin-top: 20px;
+        }
+
+        .khl-logos {
+            z-index: 1;
         }
 
         h1 {
@@ -235,9 +225,7 @@
         </div>
     </div>
 
-    <div class="khl-logos-container-wrapper">
-        <div class="khl-logos" id="khlLogos"></div>
-    </div>
+    <div class="khl-logos" id="khlLogos"></div>
 
     <div class="background-cup"></div>
     
@@ -274,36 +262,37 @@
 
         // Клубы КХЛ 2026: полное название на английском и цвет команды
         const khlTeams = [
-            { name: 'Ak Bars', short: 'АКБ', color: '#1e90ff' },
-            { name: 'SKA', short: 'СКА', color: '#0066cc' },
-            { name: 'CSKA', short: 'ЦСКА', color: '#cc0000' },
-            { name: 'Metallurg Mg', short: 'ММГ', color: '#000000' },
-            { name: 'Avangard', short: 'АВГ', color: '#ff6600' },
-            { name: 'Lokomotiv', short: 'ЛОК', color: '#006633' },
-            { name: 'Salavat Yulaev', short: 'СЮ', color: '#0099cc' },
-            { name: 'Traktor', short: 'ТРК', color: '#cc0000' },
-            { name: 'Dynamo Moscow', short: 'ДИН', color: '#0066cc' },
-            { name: 'Spartak', short: 'СПР', color: '#cc0000' },
-            { name: 'Torpedo NN', short: 'ТОР', color: '#0066cc' },
-            { name: 'Severstal', short: 'СЕВ', color: '#660099' },
-            { name: 'Sibir', short: 'СИБ', color: '#0066cc' },
-            { name: 'Admiral', short: 'АДМ', color: '#0066cc' },
-            { name: 'Amur', short: 'АМУ', color: '#ffcc00' },
-            { name: 'Barys', short: 'БРК', color: '#0066cc' },
-            { name: 'Dynamo Minsk', short: 'ДИН', color: '#009933' },
-            { name: 'Neftekhimik', short: 'НФХ', color: '#0099cc' },
-            { name: 'Avtomobilist', short: 'АВТ', color: '#cc0000' },
-            { name: 'Kunlun Red Star', short: 'КУН', color: '#cc0000' },
-            { name: 'Lada', short: 'ЛДА', color: '#0066cc' },
-            { name: 'Sochi', short: 'СОЧ', color: '#0066cc' },
-            { name: 'Dinamo Riga', short: 'РГА', color: '#990000' }
+            { name: 'Ak Bars', short: 'АКБ', color: '#0066cc' }, // синий
+            { name: 'SKA', short: 'СКА', color: '#0066cc' }, // синий
+            { name: 'CSKA', short: 'ЦСКА', color: '#d52b1e' }, // красный
+            { name: 'Metallurg Mg', short: 'ММГ', color: '#000000' }, // чёрный
+            { name: 'Avangard', short: 'АВГ', color: '#f47920' }, // оранжевый
+            { name: 'Lokomotiv', short: 'ЛОК', color: '#c8102e' }, // красный
+            { name: 'Salavat Yulaev', short: 'СЮ', color: '#006bb6' }, // синий
+            { name: 'Traktor', short: 'ТРК', color: '#e30613' }, // красный
+            { name: 'Dynamo Moscow', short: 'ДИН', color: '#0066cc' }, // синий
+            { name: 'Spartak', short: 'СПР', color: '#ec1c24' }, // красный
+            { name: 'Torpedo NN', short: 'ТОР', color: '#0033a0' }, // синий
+            { name: 'Severstal', short: 'СЕВ', color: '#ffcc00' }, // жёлтый
+            { name: 'Sibir', short: 'СИБ', color: '#0066cc' }, // синий
+            { name: 'Admiral', short: 'АДМ', color: '#0066cc' }, // синий
+            { name: 'Amur', short: 'АМУ', color: '#f47920' }, // оранжевый
+            { name: 'Barys', short: 'БРК', color: '#0066cc' }, // синий
+            { name: 'Dynamo Minsk', short: 'ДИН', color: '#009639' }, // зелёный
+            { name: 'Neftekhimik', short: 'НФХ', color: '#006bb6' }, // синий
+            { name: 'Avtomobilist', short: 'АВТ', color: '#d52b1e' }, // красный
+            { name: 'Kunlun Red Star', short: 'КУН', color: '#d52b1e' }, // красный
+            { name: 'Lada', short: 'ЛДА', color: '#0066cc' }, // синий
+            { name: 'Sochi', short: 'СОЧ', color: '#8dc63f' } // светло-зелёный
         ];
 
-        // Добавляем клубы КХЛ на фон
+        // Добавляем клубы КХЛ на фон (случайные позиции)
         const khlLogosContainer = document.getElementById('khlLogos');
         khlTeams.forEach((team, index) => {
             const logo = document.createElement('div');
             logo.className = 'khl-logo';
+            logo.style.left = (5 + Math.random() * 85) + '%';
+            logo.style.top = (10 + Math.random() * 80) + '%';
             logo.style.animationDelay = (index * 0.3) + 's';
             
             const circle = document.createElement('div');
