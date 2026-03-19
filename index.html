@@ -48,14 +48,34 @@
             height: 100%;
             pointer-events: none;
             z-index: 1;
+            display: flex;
+            justify-content: space-between;
+            padding: 100px 50px 50px;
+            box-sizing: border-box;
+        }
+
+        .khl-column {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .khl-column-title {
+            font-family: Arial Black, sans-serif;
+            font-size: 16px;
+            font-weight: bold;
+            color: #ffd700;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
         }
 
         .khl-logo {
-            position: absolute;
             font-family: Arial, sans-serif;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 300;
-            color: white;
+            color: rgba(255, 255, 255, 0.6);
             text-transform: capitalize;
             opacity: 0.5;
             animation: float 20s infinite ease-in-out;
@@ -235,68 +255,76 @@
         const phrases = document.querySelectorAll('.phrase');
         const totalPhrases = phrases.length;
 
-        // Клубы КХЛ 2026: названия на английском
-        const khlTeams = [
-            'Ak Bars',
-            'SKA',
+        // Клубы КХЛ 2025/2026 по конференциям
+        const khlWest = [
             'CSKA',
-            'Metallurg Mg',
-            'Avangard',
-            'Lokomotiv',
-            'Salavat Yulaev',
-            'Traktor',
+            'SKA',
             'Dynamo Moscow',
             'Spartak',
+            'Lokomotiv',
             'Torpedo NN',
             'Severstal',
+            'Vityaz',
+            'Sochi',
+            'Dynamo Minsk',
+            'Dinamo Riga',
+            'Kunlun Red Star'
+        ];
+
+        const khlEast = [
+            'Ak Bars',
+            'Metallurg Mg',
+            'Avangard',
+            'Salavat Yulaev',
+            'Traktor',
             'Sibir',
             'Admiral',
             'Amur',
             'Barys',
-            'Dynamo Minsk',
             'Neftekhimik',
             'Avtomobilist',
-            'Kunlun Red Star',
-            'Lada',
-            'Sochi'
+            'Lada'
         ];
 
-        // Добавляем клубы КХЛ на фон (случайные позиции без перекрытия)
+        // Добавляем клубы КХЛ двумя колонками (Запад и Восток)
         const khlLogosContainer = document.getElementById('khlLogos');
-        const occupied = [];
 
-        function checkOverlap(x, y) {
-            for (let pos of occupied) {
-                const dx = Math.abs(x - pos.x);
-                const dy = Math.abs(y - pos.y);
-                if (dx < 12 && dy < 6) {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        khlTeams.forEach((team, index) => {
+        // Западная конференция
+        const westColumn = document.createElement('div');
+        westColumn.className = 'khl-column';
+        
+        const westTitle = document.createElement('div');
+        westTitle.className = 'khl-column-title';
+        westTitle.textContent = 'WEST';
+        westColumn.appendChild(westTitle);
+        
+        khlWest.forEach((team, index) => {
             const logo = document.createElement('div');
             logo.className = 'khl-logo';
             logo.textContent = team;
-            
-            // Генерируем позицию без перекрытия
-            let x, y, attempts = 0;
-            do {
-                x = 5 + Math.random() * 85;
-                y = 10 + Math.random() * 80;
-                attempts++;
-            } while (checkOverlap(x, y) && attempts < 50);
-            
-            occupied.push({ x, y });
-            
-            logo.style.left = x + '%';
-            logo.style.top = y + '%';
             logo.style.animationDelay = (index * 0.3) + 's';
-            
-            khlLogosContainer.appendChild(logo);
+            westColumn.appendChild(logo);
         });
+
+        // Восточная конференция
+        const eastColumn = document.createElement('div');
+        eastColumn.className = 'khl-column';
+        
+        const eastTitle = document.createElement('div');
+        eastTitle.className = 'khl-column-title';
+        eastTitle.textContent = 'EAST';
+        eastColumn.appendChild(eastTitle);
+        
+        khlEast.forEach((team, index) => {
+            const logo = document.createElement('div');
+            logo.className = 'khl-logo';
+            logo.textContent = team;
+            logo.style.animationDelay = (index * 0.3) + 's';
+            eastColumn.appendChild(logo);
+        });
+
+        khlLogosContainer.appendChild(westColumn);
+        khlLogosContainer.appendChild(eastColumn);
 
         // Обратный отсчёт до плей-офф
         const playoffDate = new Date('March 23, 2026 00:00:00').getTime();
