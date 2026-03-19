@@ -25,8 +25,10 @@
             position: relative;
             padding-top: 150px;
             padding-bottom: 50px;
-            touch-action: pan-y;
             -webkit-overflow-scrolling: touch;
+            user-select: none;
+            -webkit-user-select: none;
+            overscroll-behavior: none;
         }
 
         .stars {
@@ -302,8 +304,9 @@
         const phrases = document.querySelectorAll('.phrase');
         const totalPhrases = phrases.length;
         let lastScrollTime = 0;
+        let lastClickTime = 0;
 
-        // Отслеживаем последнее время скролла
+        // Отслеживаем скролл
         window.addEventListener('scroll', function() {
             lastScrollTime = Date.now();
         }, { passive: true });
@@ -431,14 +434,26 @@
         }
 
         function showNextPhrase(event) {
-            // Не показываем фразы, если был скролл в последние 200мс
-            if (Date.now() - lastScrollTime < 200) {
+            event.preventDefault();
+            event.stopPropagation();
+            
+            // Защита от частых кликов (меньше 300мс)
+            const now = Date.now();
+            if (now - lastClickTime < 300) {
                 return;
             }
             
+            // Не показываем фразы, если был скролл в последние 300мс
+            if (now - lastScrollTime < 300) {
+                return;
+            }
+            
+            lastClickTime = now;
+            
             if (currentIndex < totalPhrases) {
                 phrases[currentIndex].classList.add('visible');
-                createFirework(event.clientX, event.clientY);
+                createFirework(event.clientX || event.touches?.[0]?.clientX || window.innerWidth / 2, 
+                              event.clientY || event.touches?.[0]?.clientY || window.innerHeight / 2);
                 currentIndex++;
 
                 if (currentIndex === totalPhrases) {
@@ -447,7 +462,8 @@
             }
         }
 
-        document.body.addEventListener('click', showNextPhrase);
+        // Обработка кликов и тапов
+        document.body.addEventListener('click', showNextPhrase, { passive: false });
 
         // Показать первую фразу при загрузке
         setTimeout(() => {
