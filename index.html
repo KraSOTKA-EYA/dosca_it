@@ -86,6 +86,7 @@
             z-index: 1;
             display: flex;
             justify-content: space-between;
+            align-items: center;
             padding: 100px 20px 50px;
             box-sizing: border-box;
         }
@@ -117,19 +118,14 @@
             color: #ffffff;
             text-transform: capitalize;
             opacity: 0.7;
-            animation: float 20s infinite ease-in-out;
-            pointer-events: auto;
+            pointer-events: none;
             white-space: nowrap;
             text-align: center;
         }
 
-        @keyframes float {
-            0%, 100% {
-                transform: translateY(0) rotate(0deg);
-            }
-            50% {
-                transform: translateY(-10px) rotate(2deg);
-            }
+        @keyframes pulse {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 1; }
         }
 
         .container {
@@ -359,7 +355,6 @@
             const logo = document.createElement('div');
             logo.className = 'khl-logo';
             logo.textContent = team;
-            logo.style.animationDelay = (index * 0.3) + 's';
             westColumn.appendChild(logo);
         });
 
@@ -376,7 +371,6 @@
             const logo = document.createElement('div');
             logo.className = 'khl-logo';
             logo.textContent = team;
-            logo.style.animationDelay = (index * 0.3) + 's';
             eastColumn.appendChild(logo);
         });
 
