@@ -25,6 +25,8 @@
             position: relative;
             padding-top: 150px;
             padding-bottom: 50px;
+            touch-action: pan-y;
+            -webkit-overflow-scrolling: touch;
         }
 
         .stars {
@@ -294,6 +296,17 @@
         let currentIndex = 0;
         const phrases = document.querySelectorAll('.phrase');
         const totalPhrases = phrases.length;
+        let isScrolling = false;
+        let scrollTimeout;
+
+        // Отслеживаем скролл для мобильных устройств
+        window.addEventListener('scroll', function() {
+            isScrolling = true;
+            clearTimeout(scrollTimeout);
+            scrollTimeout = setTimeout(function() {
+                isScrolling = false;
+            }, 150);
+        });
 
         // Клубы КХЛ 2025/2026 по конференциям
         const khlWest = [
@@ -418,6 +431,11 @@
         }
 
         function showNextPhrase(event) {
+            // Не показываем фразы во время скролла
+            if (isScrolling) {
+                return;
+            }
+            
             if (currentIndex < totalPhrases) {
                 phrases[currentIndex].classList.add('visible');
                 createFirework(event.clientX, event.clientY);
