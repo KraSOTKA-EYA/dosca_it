@@ -437,11 +437,6 @@
         }
 
         function showNextPhrase(event) {
-            // Игнорируем клики внутри контейнера с фразами
-            if (event.target.closest('.container')) {
-                return;
-            }
-            
             if (currentIndex < totalPhrases) {
                 phrases[currentIndex].classList.add('visible');
                 
@@ -457,8 +452,8 @@
             }
         }
 
-        // Обработка кликов на body (вне контейнера)
-        document.body.addEventListener('click', showNextPhrase);
+        // Обработка кликов в любом месте страницы
+        document.addEventListener('click', showNextPhrase);
 
         // Показать первую фразу при загрузке
         setTimeout(() => {
