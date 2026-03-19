@@ -222,38 +222,38 @@
 
         // Эмблемы клубов КХЛ 2026
         const khlTeams = [
-            { name: 'Ak Bars', logo: 'https://upload.wikimedia.org/wikipedia/ru/2/26/Ak_Bars_logo.svg' },
-            { name: 'SKA', logo: 'https://upload.wikimedia.org/wikipedia/ru/0/0b/SKA_Saint_Petersburg_logo.svg' },
-            { name: 'CSKA', logo: 'https://upload.wikimedia.org/wikipedia/ru/2/23/CSKA_Moscow_logo_%282017%29.svg' },
-            { name: 'Metallurg Mg', logo: 'https://upload.wikimedia.org/wikipedia/ru/6/67/Metallurg_Magnitogorsk_logo.svg' },
-            { name: 'Avangard', logo: 'https://upload.wikimedia.org/wikipedia/ru/1/14/Avangard_Omsk_logo.svg' },
-            { name: 'Lokomotiv', logo: 'https://upload.wikimedia.org/wikipedia/ru/4/4e/Lokomotiv_Yaroslavl_logo.svg' },
-            { name: 'Salavat Yulaev', logo: 'https://upload.wikimedia.org/wikipedia/ru/0/0a/Salavat_Yulaev_Ufa_logo.svg' },
-            { name: 'Traktor', logo: 'https://upload.wikimedia.org/wikipedia/ru/3/32/Traktor_Chelyabinsk_logo.svg' },
-            { name: 'Dynamo Msk', logo: 'https://upload.wikimedia.org/wikipedia/ru/1/1f/Dynamo_Moscow_logo_%282019%29.svg' },
-            { name: 'Spartak', logo: 'https://upload.wikimedia.org/wikipedia/ru/7/77/Spartak_Moscow_logo_%282015%29.svg' },
-            { name: 'Torpedo NN', logo: 'https://upload.wikimedia.org/wikipedia/ru/9/92/Torpedo_Nizhny_Novgorod_logo.svg' },
-            { name: 'Severstal', logo: 'https://upload.wikimedia.org/wikipedia/ru/8/8f/Severstal_Cherepovets_logo.svg' },
-            { name: 'Vityaz', logo: 'https://upload.wikimedia.org/wikipedia/ru/7/7e/Vityaz_Podolsk_logo.svg' },
-            { name: 'Sibir', logo: 'https://upload.wikimedia.org/wikipedia/ru/2/2a/HC_Sibir_logo.svg' },
-            { name: 'Admiral', logo: 'https://upload.wikimedia.org/wikipedia/ru/8/8f/Admiral_Vladivostok_logo.svg' },
-            { name: 'Amur', logo: 'https://upload.wikimedia.org/wikipedia/ru/0/0f/Amur_Khabarovsk_logo.svg' },
-            { name: 'Barys', logo: 'https://upload.wikimedia.org/wikipedia/ru/2/2f/Barys_Astana_logo.svg' },
-            { name: 'Dynamo Mn', logo: 'https://upload.wikimedia.org/wikipedia/ru/7/7f/Dynamo_Minsk_logo.svg' },
-            { name: 'Neftekhimik', logo: 'https://upload.wikimedia.org/wikipedia/ru/3/3f/Neftekhimik_Nizhnekamsk_logo.svg' },
-            { name: 'Avtomobilist', logo: 'https://upload.wikimedia.org/wikipedia/ru/6/6f/Avtomobilist_Yekaterinburg_logo.svg' },
-            { name: 'Kunlun', logo: 'https://upload.wikimedia.org/wikipedia/ru/5/5f/Kunlun_Red_Star_logo.svg' },
-            { name: 'Lada', logo: 'https://upload.wikimedia.org/wikipedia/ru/2/2f/HC_Lada_logo.svg' },
-            { name: 'Sochi', logo: 'https://upload.wikimedia.org/wikipedia/ru/2/2f/HC_Sochi_logo.svg' },
-            { name: 'Dinamo Riga', logo: 'https://upload.wikimedia.org/wikipedia/ru/2/2f/Dinamo_Riga_logo.svg' }
+            'https://khl.ru/upload/teams/ak-bars.png',
+            'https://khl.ru/upload/teams/ska.png',
+            'https://khl.ru/upload/teams/cska.png',
+            'https://khl.ru/upload/teams/metallurg-mg.png',
+            'https://khl.ru/upload/teams/avangard.png',
+            'https://khl.ru/upload/teams/lokomotiv.png',
+            'https://khl.ru/upload/teams/salavat-yulaev.png',
+            'https://khl.ru/upload/teams/traktor.png',
+            'https://khl.ru/upload/teams/dynamo-msk.png',
+            'https://khl.ru/upload/teams/spartak.png',
+            'https://khl.ru/upload/teams/torpedo.png',
+            'https://khl.ru/upload/teams/severstal.png',
+            'https://khl.ru/upload/teams/vityaz.png',
+            'https://khl.ru/upload/teams/sibir.png',
+            'https://khl.ru/upload/teams/admiral.png',
+            'https://khl.ru/upload/teams/amur.png',
+            'https://khl.ru/upload/teams/barys.png',
+            'https://khl.ru/upload/teams/dynamo-mn.png',
+            'https://khl.ru/upload/teams/neftekhimik.png',
+            'https://khl.ru/upload/teams/avtomobilist.png',
+            'https://khl.ru/upload/teams/kunlun.png',
+            'https://khl.ru/upload/teams/lada.png',
+            'https://khl.ru/upload/teams/sochi.png',
+            'https://khl.ru/upload/teams/dinamo-riga.png'
         ];
 
         // Добавляем эмблемы на фон
         const khlLogosContainer = document.getElementById('khlLogos');
-        khlTeams.forEach((team, index) => {
+        khlTeams.forEach((logoUrl, index) => {
             const img = document.createElement('img');
-            img.src = team.logo;
-            img.alt = team.name;
+            img.src = logoUrl;
+            img.alt = 'KHL Team';
             img.className = 'khl-logo';
             img.style.left = (5 + index * 4) + '%';
             img.style.top = (10 + (index % 6) * 15) + '%';
@@ -261,6 +261,7 @@
             img.style.width = (50 + Math.random() * 20) + 'px';
             img.style.height = 'auto';
             img.style.filter = 'drop-shadow(0 0 5px rgba(255, 215, 0, 0.3))';
+            img.onerror = function() { this.style.display = 'none'; };
             khlLogosContainer.appendChild(img);
         });
 
