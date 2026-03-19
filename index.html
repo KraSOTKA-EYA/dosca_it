@@ -260,39 +260,65 @@
         const phrases = document.querySelectorAll('.phrase');
         const totalPhrases = phrases.length;
 
-        // Клубы КХЛ 2026: полное название на английском и цвет команды
+        // Клубы КХЛ 2026: полное название на английском и официальные цвета команд
         const khlTeams = [
-            { name: 'Ak Bars', short: 'АКБ', color: '#0066cc' }, // синий
-            { name: 'SKA', short: 'СКА', color: '#0066cc' }, // синий
-            { name: 'CSKA', short: 'ЦСКА', color: '#d52b1e' }, // красный
+            { name: 'Ak Bars', short: 'АКБ', color: '#00A651' }, // зелёный
+            { name: 'SKA', short: 'СКА', color: '#0066B3' }, // синий
+            { name: 'CSKA', short: 'ЦСКА', color: '#D52B1E' }, // красный
             { name: 'Metallurg Mg', short: 'ММГ', color: '#000000' }, // чёрный
-            { name: 'Avangard', short: 'АВГ', color: '#f47920' }, // оранжевый
-            { name: 'Lokomotiv', short: 'ЛОК', color: '#c8102e' }, // красный
-            { name: 'Salavat Yulaev', short: 'СЮ', color: '#006bb6' }, // синий
-            { name: 'Traktor', short: 'ТРК', color: '#e30613' }, // красный
-            { name: 'Dynamo Moscow', short: 'ДИН', color: '#0066cc' }, // синий
-            { name: 'Spartak', short: 'СПР', color: '#ec1c24' }, // красный
-            { name: 'Torpedo NN', short: 'ТОР', color: '#0033a0' }, // синий
-            { name: 'Severstal', short: 'СЕВ', color: '#ffcc00' }, // жёлтый
-            { name: 'Sibir', short: 'СИБ', color: '#0066cc' }, // синий
-            { name: 'Admiral', short: 'АДМ', color: '#0066cc' }, // синий
-            { name: 'Amur', short: 'АМУ', color: '#f47920' }, // оранжевый
-            { name: 'Barys', short: 'БРК', color: '#0066cc' }, // синий
+            { name: 'Avangard', short: 'АВГ', color: '#F47920' }, // оранжевый
+            { name: 'Lokomotiv', short: 'ЛОК', color: '#C8102E' }, // красный
+            { name: 'Salavat Yulaev', short: 'СЮ', color: '#006BB6' }, // синий
+            { name: 'Traktor', short: 'ТРК', color: '#E30613' }, // красный
+            { name: 'Dynamo Moscow', short: 'ДИН', color: '#0066B3' }, // синий
+            { name: 'Spartak', short: 'СПР', color: '#EC1C24' }, // красный
+            { name: 'Torpedo NN', short: 'ТОР', color: '#0033A0' }, // синий
+            { name: 'Severstal', short: 'СЕВ', color: '#FFD100' }, // жёлтый
+            { name: 'Sibir', short: 'СИБ', color: '#0066B3' }, // синий
+            { name: 'Admiral', short: 'АДМ', color: '#0066B3' }, // синий
+            { name: 'Amur', short: 'АМУ', color: '#F47920' }, // оранжевый
+            { name: 'Barys', short: 'БРК', color: '#00A3E0' }, // голубой
             { name: 'Dynamo Minsk', short: 'ДИН', color: '#009639' }, // зелёный
-            { name: 'Neftekhimik', short: 'НФХ', color: '#006bb6' }, // синий
-            { name: 'Avtomobilist', short: 'АВТ', color: '#d52b1e' }, // красный
-            { name: 'Kunlun Red Star', short: 'КУН', color: '#d52b1e' }, // красный
-            { name: 'Lada', short: 'ЛДА', color: '#0066cc' }, // синий
-            { name: 'Sochi', short: 'СОЧ', color: '#8dc63f' } // светло-зелёный
+            { name: 'Neftekhimik', short: 'НФХ', color: '#006BB6' }, // синий
+            { name: 'Avtomobilist', short: 'АВТ', color: '#D52B1E' }, // красный
+            { name: 'Kunlun Red Star', short: 'КУН', color: '#D52B1E' }, // красный
+            { name: 'Lada', short: 'ЛДА', color: '#FFD100' }, // жёлтый
+            { name: 'Sochi', short: 'СОЧ', color: '#8DC63F' } // светло-зелёный
         ];
 
-        // Добавляем клубы КХЛ на фон (случайные позиции)
+        // Добавляем клубы КХЛ на фон (случайные позиции без перекрытия)
         const khlLogosContainer = document.getElementById('khlLogos');
+        const logoWidth = 140; // примерная шрина логотипа в пикселях
+        const logoHeight = 50;
+        const occupied = [];
+
+        function checkOverlap(x, y) {
+            for (let pos of occupied) {
+                const dx = Math.abs(x - pos.x);
+                const dy = Math.abs(y - pos.y);
+                if (dx < 15 && dy < 8) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         khlTeams.forEach((team, index) => {
             const logo = document.createElement('div');
             logo.className = 'khl-logo';
-            logo.style.left = (5 + Math.random() * 85) + '%';
-            logo.style.top = (10 + Math.random() * 80) + '%';
+            
+            // Генерируем позицию без перекрытия
+            let x, y, attempts = 0;
+            do {
+                x = 5 + Math.random() * 85;
+                y = 10 + Math.random() * 80;
+                attempts++;
+            } while (checkOverlap(x, y) && attempts < 50);
+            
+            occupied.push({ x, y });
+            
+            logo.style.left = x + '%';
+            logo.style.top = y + '%';
             logo.style.animationDelay = (index * 0.3) + 's';
             
             const circle = document.createElement('div');
