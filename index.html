@@ -52,39 +52,14 @@
 
         .khl-logo {
             position: absolute;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            animation: float 20s infinite ease-in-out;
-            background: rgba(0, 0, 0, 0.4);
-            padding: 8px 15px;
-            border-radius: 20px;
-            pointer-events: auto;
-        }
-
-        .khl-circle {
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-family: Arial Black, sans-serif;
-            font-size: 14px;
-            font-weight: bold;
-            color: white;
-            text-shadow: 0 0 5px rgba(0, 0, 0, 0.8);
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-            opacity: 0.7;
-            flex-shrink: 0;
-        }
-
-        .khl-name {
             font-family: Arial, sans-serif;
-            font-size: 12px;
-            font-weight: bold;
-            color: rgba(255, 255, 255, 0.7);
-            text-transform: uppercase;
+            font-size: 14px;
+            font-weight: 300;
+            color: white;
+            text-transform: capitalize;
+            opacity: 0.5;
+            animation: float 20s infinite ease-in-out;
+            pointer-events: auto;
             white-space: nowrap;
         }
 
@@ -260,43 +235,41 @@
         const phrases = document.querySelectorAll('.phrase');
         const totalPhrases = phrases.length;
 
-        // Клубы КХЛ 2026: полное название на английском и официальные цвета команд
+        // Клубы КХЛ 2026: названия на английском
         const khlTeams = [
-            { name: 'Ak Bars', short: 'АКБ', color: '#00A651' }, // зелёный
-            { name: 'SKA', short: 'СКА', color: '#0066B3' }, // синий
-            { name: 'CSKA', short: 'ЦСКА', color: '#D52B1E' }, // красный
-            { name: 'Metallurg Mg', short: 'ММГ', color: '#000000' }, // чёрный
-            { name: 'Avangard', short: 'АВГ', color: '#F47920' }, // оранжевый
-            { name: 'Lokomotiv', short: 'ЛОК', color: '#C8102E' }, // красный
-            { name: 'Salavat Yulaev', short: 'СЮ', color: '#006BB6' }, // синий
-            { name: 'Traktor', short: 'ТРК', color: '#E30613' }, // красный
-            { name: 'Dynamo Moscow', short: 'ДИН', color: '#0066B3' }, // синий
-            { name: 'Spartak', short: 'СПР', color: '#EC1C24' }, // красный
-            { name: 'Torpedo NN', short: 'ТОР', color: '#0033A0' }, // синий
-            { name: 'Severstal', short: 'СЕВ', color: '#FFD100' }, // жёлтый
-            { name: 'Sibir', short: 'СИБ', color: '#0066B3' }, // синий
-            { name: 'Admiral', short: 'АДМ', color: '#0066B3' }, // синий
-            { name: 'Amur', short: 'АМУ', color: '#F47920' }, // оранжевый
-            { name: 'Barys', short: 'БРК', color: '#00A3E0' }, // голубой
-            { name: 'Dynamo Minsk', short: 'ДИН', color: '#009639' }, // зелёный
-            { name: 'Neftekhimik', short: 'НФХ', color: '#006BB6' }, // синий
-            { name: 'Avtomobilist', short: 'АВТ', color: '#D52B1E' }, // красный
-            { name: 'Kunlun Red Star', short: 'КУН', color: '#D52B1E' }, // красный
-            { name: 'Lada', short: 'ЛДА', color: '#FFD100' }, // жёлтый
-            { name: 'Sochi', short: 'СОЧ', color: '#8DC63F' } // светло-зелёный
+            'Ak Bars',
+            'SKA',
+            'CSKA',
+            'Metallurg Mg',
+            'Avangard',
+            'Lokomotiv',
+            'Salavat Yulaev',
+            'Traktor',
+            'Dynamo Moscow',
+            'Spartak',
+            'Torpedo NN',
+            'Severstal',
+            'Sibir',
+            'Admiral',
+            'Amur',
+            'Barys',
+            'Dynamo Minsk',
+            'Neftekhimik',
+            'Avtomobilist',
+            'Kunlun Red Star',
+            'Lada',
+            'Sochi'
         ];
 
         // Добавляем клубы КХЛ на фон (случайные позиции без перекрытия)
         const khlLogosContainer = document.getElementById('khlLogos');
-        const logoWidth = 140; // примерная шрина логотипа в пикселях
-        const logoHeight = 50;
         const occupied = [];
 
         function checkOverlap(x, y) {
             for (let pos of occupied) {
                 const dx = Math.abs(x - pos.x);
                 const dy = Math.abs(y - pos.y);
-                if (dx < 15 && dy < 8) {
+                if (dx < 12 && dy < 6) {
                     return true;
                 }
             }
@@ -306,6 +279,7 @@
         khlTeams.forEach((team, index) => {
             const logo = document.createElement('div');
             logo.className = 'khl-logo';
+            logo.textContent = team;
             
             // Генерируем позицию без перекрытия
             let x, y, attempts = 0;
@@ -321,17 +295,6 @@
             logo.style.top = y + '%';
             logo.style.animationDelay = (index * 0.3) + 's';
             
-            const circle = document.createElement('div');
-            circle.className = 'khl-circle';
-            circle.style.backgroundColor = team.color;
-            circle.textContent = team.short;
-            
-            const name = document.createElement('span');
-            name.className = 'khl-name';
-            name.textContent = team.name;
-            
-            logo.appendChild(circle);
-            logo.appendChild(name);
             khlLogosContainer.appendChild(logo);
         });
 
